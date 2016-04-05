@@ -4,3 +4,6 @@
 
 Pull-Requests are welcome.
 
+# Requirements
+
+This lib requires rust 1.8 or later
