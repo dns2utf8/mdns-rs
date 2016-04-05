@@ -43,7 +43,7 @@ impl Mdns {
     
     fn filter_timedout(&mut self) {
         let now = Instant::now();
-        self.cached_descriptors.retain(|&e| e.timeout < now);
+        self.cached_descriptors.retain(|ref e| e.timeout < now);
     }
 }
 
