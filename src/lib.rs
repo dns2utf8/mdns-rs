@@ -1,15 +1,18 @@
 /// Implementation of https://tools.ietf.org/html/rfc6762
 
-use std::time::Duration;
+use std::time::{Duration, Instant};
 
+#[derive(Debug)]
 pub struct Mdns {
     socket_timeout : Duration,
     cached_descriptors : Vec<Descriptor>,
     published_descriptors : Vec<Descriptor>,
 }
 
+#[derive(Debug, Clone)]
 pub struct Descriptor {
-    name : String, 
+    name : String,
+    timeout : Instant,
 }
 
 impl Mdns {
@@ -21,8 +24,12 @@ impl Mdns {
         }
     }
     
-    pub fn lookup_name(&self, name : &str) -> Vec<Descriptor> {
-        vec![]
+    pub fn lookup_name(&mut self, name : &str) -> Vec<Descriptor> {
+        self.filter_timedout();
+        
+        self.cached_descriptors.iter().filter(|&e| {
+            e.name == name
+        }).cloned().into_iter().collect()
     }
     
     pub fn publish(&mut self, descriptor : Descriptor) {
@@ -32,6 +39,11 @@ impl Mdns {
     pub fn publish_unique(&mut self, descriptor : Descriptor) {
         // TODO probe first
         self.publish(descriptor);
+    }
+    
+    fn filter_timedout(&mut self) {
+        let now = Instant::now();
+        self.cached_descriptors.retain(|&e| e.timeout < now);
     }
 }
 
@@ -62,5 +74,10 @@ mod tests {
         
         let r0 = md.lookup_name("bye-bye.local");
         assert!( r0.is_empty() );
+    }
+    
+    #[test]
+    fn listen_to_published() {
+        
     }
 }
