@@ -13,6 +13,7 @@ pub struct Mdns {
 pub struct Descriptor {
     name : String,
     timeout : Instant,
+    port : u16,
 }
 
 impl Mdns {
@@ -67,6 +68,7 @@ mod tests {
                 Descriptor{
                     name: "bye-bye.local".into(),
                     timeout : Instant::now(),
+                    port : 123,
                 }
             ],
             published_descriptors : vec![],
