@@ -56,14 +56,19 @@ impl Drop for Descriptor {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::time::Duration;
+    use std::time::{Duration, Instant};
     use std::thread;
     
     #[test]
     fn drop_out_cache() {
         let mut md = Mdns {
             socket_timeout : Duration::from_millis(0),
-            cached_descriptors : vec![ Descriptor{ name: "bye-bye.local".into() } ],
+            cached_descriptors : vec![
+                Descriptor{
+                    name: "bye-bye.local".into(),
+                    timeout : Instant::now(),
+                }
+            ],
             published_descriptors : vec![],
         };
         
